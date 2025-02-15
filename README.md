@@ -1,7 +1,7 @@
-## 主要文件目录
+# Project Directory Structure
 ```
 ├─data
-│  ├─interim        # 中间数据
+│  ├─interim        # Intermediate data
 │  │  │  colors.png
 │  │  │  LULC_log.txt
 │  │  │  masks.pkl
@@ -27,56 +27,91 @@
 │  │      ├─LULC
 │  │      └─RSEI
 │  │
-│  ├─processed      # 输出数据
+│  ├─processed      # Processed output data
 │  │  └─output_images
 │  │
-│  └─raw        # 原始数据
-│      │  新建 XLSX 工作表.xlsx
+│  └─raw            # Raw data
+│      │  New XLSX Worksheet.xlsx
 │      ├─FVC
 │      ├─LULC
 │      └─RSEI
 │
 ├─doc
-│      模型性能.docx
-│      模型说明.docx
-│      结果.docx
+│      Model_Performance.docx
+│      Model_Description.docx
+│      Results.docx
 │
 ├─notebooks
-│      CnovLSTM.ipynb       # 模型训练、推理都在notebook中处理（使用colab）
+│      CnovLSTM.ipynb       # Model training and inference (using Google Colab)
 └─src
-    │  analyse_res.py       # 统计结果中每个地区各级占比
-    │  calculate_outputs_avg.py     # 计算结果平均值
-    │  cv_utils.py      # 视觉处理的工具函数（分割地区、数据维度转换等）
-    │  extract_mask.py      # 提取目标区域掩码，用于生成数据集
-    │  pic_to_2d_arr.py     # 图像转换为2d数组
-    │  show_color.py        # 显示色卡，调试用
+    │  analyse_res.py       # Computes the proportion of each category in different regions
+    │  calculate_outputs_avg.py     # Computes the average values of results
+    │  cv_utils.py          # Utility functions for image processing (region segmentation, data transformation, etc.)
+    │  extract_mask.py      # Extracts region masks for dataset generation
+    │  pic_to_2d_arr.py     # Converts images into 2D arrays
+    │  show_color.py        # Displays color maps (for debugging)
     │
     ├─models
     └─visualize
-           gbdt_tree_vis.py     # gdbt树结构可视化
-           loss_acc_vis.py      # 模型性能可视化
-           model_vis.py     # 模型可视化
+           gbdt_tree_vis.py  # Visualizes GBDT tree structures
+           loss_acc_vis.py   # Visualizes model performance metrics
+           model_vis.py      # Visualizes model architecture
 ```
-## notebook目录结构
+
+# Data and Training Environment
+The dataset and training environment can be accessed at:
+[Google Drive](https://drive.google.com/drive/folders/1wMHGfPMLXAOgrnl8m8pGvMwXG7P-Vdjf?usp=drive_link)
+
+# Preprocessing Workflow
+1. **Convert Images to 2D Arrays:**  
+   Run `src/pic_to_2d_arr.py` to convert all raw images into 2D arrays.
+   - These arrays will be saved in `/data/interim/arrays/{map_type}`.
+   - Data spanning 20 years will be stored in `/data/interim/arrays/{map_type}.npz`.
+   - Full images are named by year, while regional images are named by `year + region ID`.
+
+2. **Extract Useful Mask Regions:**  
+   Run `src/extract_mask.py` to extract useful regions from images and save the mask as `/data/interim/arrays/whole_mask.npz`.
+
+3. **Set Up the Training Environment:**  
+   - Copy the [training environment](https://drive.google.com/drive/folders/1wMHGfPMLXAOgrnl8m8pGvMwXG7P-Vdjf?usp=drive_link) to your Google Drive.
+   - Upload the four `.npz` files (`FVC.npz`, `LULC.npz`, `RSEI.npz`, `whole_mask.npz`) to the **Attention-Convolutional-Neural-Networks-and-Kong-Short-Term_Memory-Model** directory.
+
+# Notebook Directory Structure
 ```
-植被覆盖率预测
-├─models        # 存放模型权重
+Vegetation Coverage Prediction
+├─models        # Stores trained model weights
 │
-├─outputs       # 存放输出数据
+├─outputs       # Stores output data
 │
-├─FVC.nzp       # data-interim-arrays中的二维数组
+├─FVC.npz       # 2D arrays from data-interim-arrays
 │
-├─LULC.nzp       # data-interim-arrays中的二维数组
+├─LULC.npz      # 2D arrays from data-interim-arrays
 │
-├─RSEI.nzp       # data-interim-arrays中的二维数组
+├─RSEI.npz      # 2D arrays from data-interim-arrays
 │
-└─whole_mask.nzp       # data-interim-arrays中的掩码
+└─whole_mask.npz # Mask file from data-interim-arrays
 ```
-## notebook执行顺序
-    1.运行mount挂载上述目录
-    2.运行select model and map，选择模型和地图类型
-    3.运行load data，加载选择地图类型的数据，生成数据集
-    4.运行Models内的所有代码，加载所有模型类
-    5.运行Train-AMP Train，加速训练模型
-    6.完成训练后运行Test-Test All，生成模型性能报告、ROC、PR等
-    7.运行graphs生成未来预测地图
+
+# Notebook Execution Steps
+1. **Mount Google Drive:**  
+   - Run the `mount` cell to attach the directory.
+
+2. **Select Model and Map Type:**  
+   - Run `select model and map` to choose the model and dataset.
+
+3. **Load Data:**  
+   - Run `load data` to load the selected map type and generate the dataset.
+
+4. **Load Model Classes:**  
+   - Execute all cells in the `Models` section.
+
+5. **Train the Model:**  
+   - Run `Train-AMP Train` to accelerate model training.
+
+6. **Evaluate Performance:**  
+   - After training, run `Test-Test All` to generate model performance reports, including **ROC, PR curves, etc.**.
+
+7. **Generate Future Prediction Maps:**  
+   - Run `graphs` to visualize and generate future forecast maps.
+
+
